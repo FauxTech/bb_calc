@@ -21,10 +21,19 @@ class BloodBowlCalculator:
 
         return probability
 
+    @staticmethod
+    def block_roll(rolls, reroll=1):
+        if reroll == 0:
+            probability = (1 - pow((6 - rolls[0][0]) / 6, rolls[0][1]))
+        else:
+            probability = (1 - pow((6 - rolls[0][0]) / 6, 2 * rolls[0][1]))
+        return probability
+
 
 if __name__ == '__main__':
     skills = {'catch': 1, 'dodge': 1, 'pass_skill': 1, 'sure_feet': 1, 'sure_hands': 1, 'reroll': 1}
     roll = [[2, 'dodge'], [3, 'catch'], [2, 'dodge']]
-
+    block = [[3, 2]]
     calculator = BloodBowlCalculator()
-    print(calculator.prob_calc(roll, skills, reroll=1))
+    # print(calculator.prob_calc(roll, skills, reroll=1))
+    print(calculator.block_roll(block))
