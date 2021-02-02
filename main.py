@@ -34,13 +34,21 @@ class BloodBowlCalculator:
     def roll_fail(fail, num_dice):
         return pow(1 - fail / 6, num_dice)
 
+    @staticmethod
+    def minus_block_prototype(success, num_dice):
+        prob_no_reroll = pow(success / 6, num_dice)
+        prob_reroll = pow(success / 6, num_dice) + \
+            (1 - pow(success / 6, num_dice)) * pow(success / 6, num_dice)
+        return prob_no_reroll * 100, prob_reroll * 100
+
 
 if __name__ == '__main__':
-    skills = {'catch': 0, 'dodge': 1, 'pass_skill': 1, 'sure_feet': 1, 'sure_hands': 1, 'block': 0}
-    roll = [[5, 1, 'dodge'], [4, 1, 'catch'], [5, 1, 'dodge']]
+    skills = {'catch': 1, 'dodge': 1, 'pass_skill': 0, 'sure_feet': 0, 'sure_hands': 0, 'block': 0}
+    # roll = [[5, 1, 'dodge'], [4, 1, 'catch'], [5, 1, 'dodge']]
     # roll = [[5, 1, 'dodge'], [5, 1, 'catch'], [5, 1, 'dodge'], [5, 2, 'block'],
     #         [5, 1, 'pass_skill'], [5, 1, 'sure_feet'], [5, 1, 'sure_hands']]
-    # roll = [[1, 3, 'block']]
+    # roll = [[1, 3, 'block'], [5, 1, 'dodge'], [2, 1, 'dodge'], [3, 1, 'catch']]
     # block = [[2, 2]]
     calculator = BloodBowlCalculator()
-    print(calculator.prob_calc(roll, skills, reroll=1) * 100)
+    # print(calculator.prob_calc(roll, skills, reroll=1) * 100)
+    print(calculator.minus_block_prototype(5, 2))
