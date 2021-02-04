@@ -57,6 +57,21 @@ class BloodBowlCalculator:
         armour_no_pen = sum(combinations[13 - success:]) / 36
         return armour_pen * 100, armour_no_pen * 100, armour_pen_pill_on * 100
 
+    @staticmethod
+    def injury_roll():
+        # skills like thick head etc. can be defined as var that will move the index during slicking
+        combination = (1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
+        stun = sum(combination[:6]) / 36
+        ko = sum(combination[6:8]) / 36
+        cas = sum(combination[8:]) / 36
+        stun_pile_on = (ko + cas) * stun + stun
+        ko_pile_on = (stun + cas) * ko + ko
+        cas_pile_on = (stun + ko) * cas + cas
+
+        print(f"stun: {round(stun * 100, 2)}% stun_pile_on:  {round(stun_pile_on * 100, 2)}%")
+        print(f"KO: {round(ko * 100, 2)}% KO_pile_on:  {round(ko_pile_on * 100, 2)}%")
+        print(f"CAS: {round(cas * 100, 2)}% CAS_pile_on:  {round(cas_pile_on * 100, 2)}%")
+
 
 if __name__ == '__main__':
     skills = {'catch': 1, 'dodge': 1, 'pass_skill': 0, 'sure_feet': 0, 'sure_hands': 0, 'block': 0}
@@ -67,4 +82,5 @@ if __name__ == '__main__':
     roll = [[5, -2, 'block'], [5, 1, 'dodge'], [5, 1, 'dodge'], [5, 1, 'dodge'], [4, 1, 'dodge']]
     calculator = BloodBowlCalculator()
     # print(calculator.prob_calc(roll, skills, reroll=1) * 100)
-    print(calculator.armour_pen(4))
+    # print(calculator.armour_pen(4))
+    calculator.injury_roll()
