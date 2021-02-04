@@ -48,6 +48,15 @@ class BloodBowlCalculator:
     #         (1 - pow(success / 6, num_dice)) * pow(success / 6, num_dice)
     #     return prob_no_reroll * 100, prob_reroll * 100
 
+    @staticmethod
+    def armour_pen(success):
+        combinations = (1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1)
+        armour_pen = sum(combinations[:13 - success]) / 36
+        armour_pen_pill_on = (sum(combinations[:13 - success]) / 36) + \
+            (sum(combinations[13 - success:]) / 36) * (sum(combinations[:13 - success]) / 36)
+        armour_no_pen = sum(combinations[13 - success:]) / 36
+        return armour_pen * 100, armour_no_pen * 100, armour_pen_pill_on * 100
+
 
 if __name__ == '__main__':
     skills = {'catch': 1, 'dodge': 1, 'pass_skill': 0, 'sure_feet': 0, 'sure_hands': 0, 'block': 0}
@@ -57,4 +66,5 @@ if __name__ == '__main__':
     # roll = [[1, -2, 'block'], [5, 1, 'dodge'], [2, 1, 'dodge'], [3, 1, 'catch']]
     roll = [[5, -2, 'block'], [5, 1, 'dodge'], [5, 1, 'dodge'], [5, 1, 'dodge'], [4, 1, 'dodge']]
     calculator = BloodBowlCalculator()
-    print(calculator.prob_calc(roll, skills, reroll=1) * 100)
+    # print(calculator.prob_calc(roll, skills, reroll=1) * 100)
+    print(calculator.armour_pen(4))
