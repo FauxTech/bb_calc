@@ -3,38 +3,46 @@ class BloodBowlCalculator:
     def __init__(self):
         pass
 
-    def prob_calc(self, rolls, reroll_skill, reroll=1, repeat=1):
+    def prob_calc_reroll(self, rolls, reroll_skill, reroll=1, repeat=1):
         if not rolls:
             return 1
-        # successful roll calculation
-        probability = (self.roll_success(rolls[0][0], rolls[0][1])
-                       * self.prob_calc(rolls[1:], reroll_skill, reroll,
-                                        repeat=1))
+        roll = rolls[0][0]
+        num_dice = rolls[0][1]
+        roll_type = rolls[0][2]
 
+        # successful roll calculation
+        probability = (self.roll_success(roll, num_dice)
+                       * self.prob_calc_reroll(rolls[1:], reroll_skill,
+                                               reroll, repeat=1))
         # skill reroll calculation
-        if reroll_skill[rolls[0][2]] == 1 and repeat == 1:
+        if reroll_skill[roll_type] == 1 and repeat == 1:
             new_reroll_skill = dict(reroll_skill)
-            new_reroll_skill[rolls[0][2]] = 0
-            probability += (self.roll_fail(rolls[0][0], rolls[0][1])
-                            * self.prob_calc(rolls, new_reroll_skill, reroll,
-                                             repeat=0))
+            new_reroll_skill[roll_type] = 0
+            probability += (self.roll_fail(roll, num_dice)
+                            * self.prob_calc_reroll(rolls, new_reroll_skill,
+                                                    reroll, repeat=0))
         # team reroll calculation
         elif reroll == 1 and repeat == 1:
-            probability += self.roll_fail(rolls[0][0], rolls[0][1]) \
-                           * self.prob_calc(rolls, reroll_skill, 0, repeat=0)
+            probability += (self.roll_fail(roll, num_dice)
+                            * self.prob_calc_reroll(rolls, reroll_skill,
+                                                    0, repeat=0))
         return probability
 
-    def prob_calc_no_reroll(self, rolls, reroll_skill):
+    def prob_calc(self, rolls, reroll_skill):
         if not rolls:
             return 1
-        probability = (self.roll_success(rolls[0][0], rolls[0][1])
-                       * self.prob_calc_no_reroll(rolls[1:], reroll_skill))
+        roll = rolls[0][0]
+        num_dice = rolls[0][1]
+        roll_type = rolls[0][2]
 
-        if reroll_skill[rolls[0][2]] == 1:
+        probability = (self.roll_success(roll, num_dice)
+                       * self.prob_calc(rolls[1:], reroll_skill))
+
+        if reroll_skill[roll_type] == 1:
             new_reroll_skill = dict(reroll_skill)
-            new_reroll_skill[rolls[0][2]] = 0
-            probability += (self.roll_fail(rolls[0][0], rolls[0][1])
-                            * self.prob_calc_no_reroll(rolls, new_reroll_skill))
+            new_reroll_skill[roll_type] = 0
+            probability += (self.roll_fail(roll, num_dice)
+                            * self.prob_calc(rolls, new_reroll_skill))
         return probability
 
     @staticmethod
@@ -93,10 +101,10 @@ class BloodBowlCalculator:
 if __name__ == '__main__':
     skills = {'catch': 1, 'dodge': 1, 'pass_skill': 0,
               'sure_feet': 0, 'sure_hands': 0, 'block': 0}
-    roll = [[5, 2, 'block'], [5, 1, 'dodge'], [5, 1, 'dodge'],
-            [5, 1, 'dodge'], [4, 1, 'dodge']]
+    moves = [[5, 2, 'block'], [5, 1, 'dodge'], [5, 1, 'dodge'],
+             [5, 1, 'dodge'], [4, 1, 'dodge']]
     calculator = BloodBowlCalculator()
-    print(calculator.prob_calc(roll, skills, reroll=1) * 100)
-    print(calculator.prob_calc_no_reroll(roll, skills) * 100)
+    print(calculator.prob_calc_reroll(moves, skills, reroll=1) * 100)
+    print(calculator.prob_calc(moves, skills) * 100)
     # print(calculator.armour_pen(4))
     # calculator.injury_roll()
